@@ -1,20 +1,40 @@
-hello-cpp-world : hello-cpp-world.o led.o
-	g++ -o hello-cpp-world hello-cpp-world.o led.o
+TARGET = hello-cpp-world
 
-hello-cpp-world.o : hello-cpp-world.cpp
-	g++ -c hello-cpp-world.cpp -o hello-cpp-world.o
+SRC = src
+#INC = src
+#-Iinc -I../googletest -I../googletest/include
+INC	= ../make
 
-led.o : led.cpp
-	g++ -c led.cpp -o led.o
+BIN = bin
+DEPS = $(wildcard $(INC)/*.h)
+SOURCE = $(wildcard $(SRC)/*.cpp)		
+#OBJECT = $(SOURCE:.cpp=.o)	
+#OBJECT = $(notdir $(SOURCE:.cpp=.o))
+OBJECT = $(patsubst %,$(BIN)/%,$(notdir $(SOURCE:.cpp=.o))) 		# $(patsubst pattern,replacement,text)
+CC = g++
 
-.PHONY : clean run
+CXXFLAGS += -g -Wall -Wextra  -Iinc	#-I$(INC)
 
-run : hello-cpp-world
-	./hello-cpp-world
+						
+$(BIN)/$(TARGET) : $(OBJECT)
+	@echo "Linking ....."
+	$(CC) -o $@ $(OBJECT) 											# $@ = Target name 
 
-clean :
-	rm -f hello-cpp-world led.o hello-cpp-world.o
+$(BIN)/%.o :  $(SRC)/%.cpp 											# Create all .o files from all .cpp files
+	@echo "Compiling ....."
+	$(CC) $(CXXFLAGS) -c $< -o $@									# $< name of first prerequisite  
 	
+	
+.PHONY : help clean run
 
-
-# If you use gcc instead of g++ you need to add explicit linking -lstdc++
+run : $(BIN)/$(TARGET)
+	@echo "Runing ......."
+	./$(BIN)/$(TARGET)
+clean :
+	rm -f $(BIN)/$(TARGET) $(OBJECT)
+help :
+	@echo "target: $(TARGET)"
+	@echo "source: $(SOURCE)"
+	@echo "object: $(OBJECT)"
+	@echo "CXXFLAGS: $(CXXFLAGS)"
+	@echo "DEPS: $(DEPS)"
