@@ -7,9 +7,9 @@ $(TARGET) : $(OBJECT)
 	@echo "Linking ....."
 	$(CC) -o $@ $(OBJECT)			# $@ = Target name 
 
-%.o :  %.cpp						# Create all .o files from all .cpp files
+%.o :  %.cpp					# Create all .o files from all .cpp files
 	@echo "Compiling ....."
-	$(CC) $(CXXFLAGS) -c $< -o $@	# $< name of first prerequisite  
+	$(CC) $(CXXFLAGS) -c $< -o $@		# $< name of first prerequisite  
 
 .PHONY : help clean run
 
